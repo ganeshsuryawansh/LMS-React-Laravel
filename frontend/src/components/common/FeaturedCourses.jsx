@@ -1,4 +1,5 @@
 import React from 'react'
+import Course from './Course'
 
 const FeaturedCourses = () => {
     return (
