@@ -13,7 +13,6 @@ const Register = () => {
     } = useForm();
 
     const onSubmit = async (data) => {
-
         await fetch(`${apiUrl}/register`, {
             method: 'POST',
             headers: {

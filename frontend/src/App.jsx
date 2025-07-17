@@ -9,6 +9,10 @@ import WatchCourse from "./components/pages/account/WatchCourse";
 import ChangePassword from "./components/pages/account/ChangePassword";
 import MyLearning from "./components/pages/MyLearning";
 import { Toaster } from "react-hot-toast";
+import Dashboard from "./components/pages/account/Dashboard";
+import { RequireAuth } from "./components/common/RequireAuth";
+import CreateCourse from "./components/pages/account/courses/CreateCourse";
+import EditCourse from "./components/pages/account/courses/EditCourse";
 
 function App() {
   return (
@@ -24,6 +28,25 @@ function App() {
           <Route path="/account/Change-Password" element={<ChangePassword />} />
           <Route path="/account/courses-enrolled" element={<MyLearning />} />
           <Route path="/account/WatchCourse" element={<WatchCourse />} />
+
+          <Route path="/account/dashboard" element={
+            <RequireAuth>
+              <Dashboard />
+            </RequireAuth>
+          } />
+
+          <Route path="/account/courses/create" element={
+            <RequireAuth>
+              <CreateCourse />
+            </RequireAuth>
+          } />
+
+          <Route path="/account/courses/edit/:id" element={
+            <RequireAuth>
+              <EditCourse />
+            </RequireAuth>
+          } />
+
         </Routes>
       </BrowserRouter>
 
@@ -31,7 +54,6 @@ function App() {
         position="top-center"
         reverseOrder={false}
       />
-
     </>
   )
 }
