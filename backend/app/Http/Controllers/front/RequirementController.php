@@ -3,18 +3,19 @@
 namespace App\Http\Controllers\front;
 
 use App\Http\Controllers\Controller;
-use App\Models\Outcome;
+use App\Models\Requirment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class OutcomeController extends Controller
+class RequirementController extends Controller
 {
-    // this mwthid will return all OutComes of a course
+
+    // this method will return all OutComes of a course.
     public function index(Request $request)
     {
-        $outcomes = Outcome::where('course_id', $request->course_id)->get();
+        $requirments = Requirment::where('course_id', $request->course_id)->get();
 
-        if ($outcomes == null) {
+        if ($requirments == null) {
             return response()->json([
                 'status' => 404,
                 'message' => 'Outcome Not Found'
@@ -23,15 +24,16 @@ class OutcomeController extends Controller
 
         return response()->json([
             'status' => 200,
-            'data' => $outcomes
+            'data' => $requirments
         ], 200);
     }
 
-    // this method will save outcome
+
+    // this method will save requirments.
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'outcome' => 'required',
+            'requirment' => 'required',
             'course_id' => 'required'
         ]);
 
@@ -42,33 +44,33 @@ class OutcomeController extends Controller
             ], 400);
         }
 
-        $outcome = new Outcome();
-        $outcome->course_id = $request->course_id;
-        $outcome->text = $request->outcome;
-        $outcome->sort_order = 1000;
-        $outcome->save();
+        $requirment = new Requirment();
+        $requirment->course_id = $request->course_id;
+        $requirment->text = $request->requirment;
+        $requirment->sort_order = 1000;
+        $requirment->save();
 
         return response()->json([
             'status' => 200,
-            'data' => $outcome,
-            'message' => 'Outcome Added Successfully!'
+            'data' => $requirment,
+            'message' => 'Requirment Added Successfully!'
         ], 200);
     }
 
     //This method update outcome.
     public function update($id, Request $request)
     {
-        $outcome = Outcome::find($id);
+        $requirment = Requirment::find($id);
 
-        if ($outcome == null) {
+        if ($requirment == null) {
             return response()->json([
                 'status' => 401,
-                'errors' => 'Outcome Not Found!'
+                'errors' => 'Requirment Not Found!'
             ], 401);
         }
 
         $validator = Validator::make($request->all(), [
-            'outcome' => 'required'
+            'requirment' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -78,25 +80,25 @@ class OutcomeController extends Controller
             ], 400);
         }
 
-        $outcome->text = $request->outcome;
-        $outcome->save();
+        $requirment->text = $request->requirment;
+        $requirment->save();
 
         return response()->json([
             'status' => 200,
-            'data' => $outcome,
-            'message' => 'Outcome Updated Successfully!'
+            'data' => $requirment,
+            'message' => 'Requirment Updated Successfully!'
         ], 200);
     }
 
     // This method delete outcome.
     public function destroy($id)
     {
-        $outcome = Outcome::find($id);
+        $outcome = Requirment::find($id);
 
         if ($outcome == null) {
             return response()->json([
                 'status' => 401,
-                'message' => 'Outcome not found!'
+                'message' => 'Requirment not found!'
             ], 401);
         }
 
@@ -104,7 +106,7 @@ class OutcomeController extends Controller
 
         return response()->json([
             'status' => 200,
-            'message' => 'Outcome Delete Successfully.!'
+            'message' => 'Requirment Delete Successfully.!'
         ], 200);
     }
 }

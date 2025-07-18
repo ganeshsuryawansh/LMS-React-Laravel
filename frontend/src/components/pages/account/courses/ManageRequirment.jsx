@@ -1,35 +1,33 @@
 import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form';
-import { apiUrl, token } from '../../../common/Config';
 import { useParams } from 'react-router-dom';
+import { apiUrl, token } from '../../../common/Config';
 import toast from 'react-hot-toast';
-import { MdDragIndicator } from "react-icons/md";
-import { FaEdit } from "react-icons/fa";
-import { MdDeleteForever } from "react-icons/md";
-import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
-import UpdateOutcome from './UpdateOutcome';
+import { MdDeleteForever, MdDragIndicator } from 'react-icons/md';
+import { FaEdit } from 'react-icons/fa';
+import UpdateRequirment from './UpdateRequirment';
 
-const ManageOutcome = () => {
+const ManageRequirment = () => {
+
     const [loading, setLoading] = useState(false);
-    const [outcomes, setOutcomes] = useState([]);
-    const [outcomeData, setOutcomeData] = useState();
+    const [requirments, setRequirments] = useState([]);
+    const [requirmentData, setrequirmentData] = useState();
     const params = useParams();
     const { register, handleSubmit, formState: { errors }, reset, setError } = useForm();
 
-    // Modal States
-    const [showOutcome, setShowOutcome] = useState(false);
-    const handleClose = () => setShowOutcome(false);
-    const handleShow = (outcome) => {
-        setShowOutcome(true);
-        setOutcomeData(outcome);
+    // Modal States.
+    const [showRequirment, setShowRequirment] = useState(false);
+    const handleClose = () => setShowRequirment(false);
+    const handleShow = (requirment) => {
+        setShowRequirment(true);
+        setrequirmentData(requirment);
     }
 
     const onSubmit = async (data) => {
         const formData = { ...data, course_id: params.id }
 
         setLoading(true);
-        await fetch(`${apiUrl}/outcomes`, {
+        await fetch(`${apiUrl}/requirments`, {
             method: 'POST',
             headers: {
                 'Content-type': 'application/json',
@@ -41,8 +39,8 @@ const ManageOutcome = () => {
             .then(result => {
                 setLoading(false);
                 if (result.status == 200) {
-                    const newOutcomes = [...outcomes, result.data];
-                    setOutcomes(newOutcomes);
+                    const newRequirments = [...requirments, result.data];
+                    setRequirments(newRequirments);
                     toast.success(result.message);
                     reset();
                 } else {
@@ -54,9 +52,9 @@ const ManageOutcome = () => {
             });
     }
 
-    const fetchOutcomes = async () => {
+    const fetchRequirments = async () => {
         setLoading(true);
-        await fetch(`${apiUrl}/outcomes?course_id=${params.id}`, {
+        await fetch(`${apiUrl}/requirments?course_id=${params.id}`, {
             method: 'GET',
             headers: {
                 'Content-type': 'application/json',
@@ -65,95 +63,69 @@ const ManageOutcome = () => {
             },
         }).then(res => res.json())
             .then(result => {
-                // console.log(result);
+                console.log(result);
 
                 if (result.status == 200) {
                     setLoading(false);
-                    setOutcomes(result.data);
+                    setRequirments(result.data);
                 } else {
                     const errors = result.errors;
                     Object.keys(errors).forEach(field => {
                         setError(field, { message: errors[field[0]] })
                     })
                 }
-
             });
     }
 
-    const deleteOutcome = async (id) => {
-
-        if (confirm("Are You sure you want to delete?")) {
-            await fetch(`${apiUrl}/outcomes/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-type': 'application/json',
-                    'Accept': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                }
-            }).then(res => res.json())
-                .then(result => {
-                    if (result.status == 200) {
-                        const newOutcomes = outcomes.filter(outcome => outcome.id != id)
-                        setOutcomes(newOutcomes);
-                        toast.success(result.message);
-                    } else {
-                        const errors = result.errors;
-                        Object.keys(errors).forEach(field => {
-                            setError(field, { message: errors[field[0]] })
-                        })
-                    }
-                });
-        }
-    }
-
     useEffect(() => {
-        fetchOutcomes();
-    }, [])
+        fetchRequirments();
+    }, []);
 
     return (
         <>
-            <div className='card shadow-lg border-0' >
+            <div className='card shadow-lg border-0 my-3' >
                 <div className='card-body p-4'>
                     <div className='d-flex' >
-                        <h4 className='h5 mb-3'>Outcome</h4>
+                        <h4 className='h5 mb-3'>Requirment</h4>
                     </div>
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <div className='mb-3' >
                             <input
                                 {
-                                ...register("outcome", {
-                                    required: "The outcome feild id required!."
+                                ...register("requirment", {
+                                    required: "The requirment feild id required!."
                                 })
                                 }
                                 type='text'
-                                className={`form-control ${errors.outcome && 'is-invalid'} `}
-                                placeholder='Outcome'
+                                className={`form-control ${errors.requirment && 'is-invalid'} `}
+                                placeholder='Requirment'
                             />
-                            {errors.outcome && <p className='invalid-feedback' >{errors.outcome.message}</p>}
+                            {errors.requirment && <p className='invalid-feedback' >{errors.requirment.message}</p>}
                         </div>
 
                         <button className='btn btn-primary' disabled={loading} >
                             {loading == false ? 'Save' : 'Please wait...'}
                         </button>
                     </form>
+
                     {
-                        outcomes && outcomes.map(outcome => {
+                        requirments && requirments.map(requirment => {
                             return (
-                                <div key={outcome.id} className='card my-3' >
+                                <div key={requirment.id} className='card my-3' >
                                     <div className='card-body p-2 d-flex' >
                                         <div>
                                             <MdDragIndicator />
                                         </div>
                                         <div className='d-flex justify-content-between w-100' >
                                             <div className='ps-2' >
-                                                {outcome.text}
+                                                {requirment.text}
                                             </div>
                                             <div className='d-flex'>
-                                                <a onClick={() => handleShow(outcome)} className='text-primary me-1' >
+                                                <a onClick={() => handleShow(requirment)} className='text-primary me-1' >
                                                     <FaEdit />
                                                 </a>
 
-                                                <a onClick={() => deleteOutcome(outcome.id)} className='text-danger'>
+                                                <a onClick={() => deleteOutcome(requirment.id)} className='text-danger'>
                                                     <MdDeleteForever />
                                                 </a>
                                             </div>
@@ -163,19 +135,18 @@ const ManageOutcome = () => {
                             )
                         })
                     }
+
                 </div>
             </div>
-
-            <UpdateOutcome
-                outcomeData={outcomeData}
-                showOutcome={showOutcome}
+            <UpdateRequirment
+                showRequirment={showRequirment}
+                requirments={requirments}
+                setRequirments={setRequirments}
+                requirmentData={requirmentData}
                 handleClose={handleClose}
-                outcomes={outcomes}
-                setOutcomes={setOutcomes}
-
             />
         </>
     )
 }
 
-export default ManageOutcome
+export default ManageRequirment

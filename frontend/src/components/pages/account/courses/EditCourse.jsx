@@ -6,6 +6,7 @@ import { apiUrl, token } from '../../../common/Config'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import ManageOutcome from './ManageOutcome'
+import ManageRequirment from './ManageRequirment'
 
 const EditCourse = () => {
 
@@ -241,9 +242,8 @@ const EditCourse = () => {
 
                                 {/* Outcomes */}
                                 <div className='col-md-5'>
-
-                                   <ManageOutcome/>
-
+                                    <ManageOutcome />
+                                    <ManageRequirment />
                                 </div>
                             </div>
                         </div>
