@@ -6,9 +6,9 @@ import toast from 'react-hot-toast';
 import { MdDragIndicator } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
 import { MdDeleteForever } from "react-icons/md";
-import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
 import UpdateOutcome from './UpdateOutcome';
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+
 
 const ManageOutcome = () => {
     const [loading, setLoading] = useState(false);
@@ -81,7 +81,6 @@ const ManageOutcome = () => {
     }
 
     const deleteOutcome = async (id) => {
-
         if (confirm("Are You sure you want to delete?")) {
             await fetch(`${apiUrl}/outcomes/${id}`, {
                 method: 'DELETE',
@@ -106,19 +105,53 @@ const ManageOutcome = () => {
         }
     }
 
+    const handleDragEnd = (result) => {
+
+        if (!result.destination) return;
+
+        const reorderedItems = Array.from(outcomes);
+        const [movedItem] = reorderedItems.splice(result.source.index, 1);
+        reorderedItems.splice(result.destination.index, 0, movedItem);
+
+        setOutcomes(reorderedItems);
+        saveOrder(reorderedItems);
+    };
+
+    const saveOrder = async (updateOutcomes) => {
+        await fetch(`${apiUrl}/sort-outcomes`, {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json',
+                'Accept': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ outcomes: updateOutcomes })
+        }).then(res => res.json())
+            .then(result => {
+                if (result.status == 200) {
+                    toast.success(result.message);
+                } else {
+                    const errors = result.errors;
+                    Object.keys(errors).forEach(field => {
+                        setError(field, { message: errors[field[0]] })
+                    })
+                }
+            });
+    }
+
     useEffect(() => {
         fetchOutcomes();
     }, [])
 
     return (
         <>
-            <div className='card shadow-lg border-0' >
+            <div className='card shadow-lg border-0'>
                 <div className='card-body p-4'>
-                    <div className='d-flex' >
+                    <div className='d-flex'>
                         <h4 className='h5 mb-3'>Outcome</h4>
                     </div>
                     <form onSubmit={handleSubmit(onSubmit)}>
-                        <div className='mb-3' >
+                        <div className='mb-3'>
                             <input
                                 {
                                 ...register("outcome", {
@@ -129,40 +162,53 @@ const ManageOutcome = () => {
                                 className={`form-control ${errors.outcome && 'is-invalid'} `}
                                 placeholder='Outcome'
                             />
-                            {errors.outcome && <p className='invalid-feedback' >{errors.outcome.message}</p>}
+                            {errors.outcome && <p className='invalid-feedback'>{errors.outcome.message}</p>}
                         </div>
 
                         <button className='btn btn-primary' disabled={loading} >
                             {loading == false ? 'Save' : 'Please wait...'}
                         </button>
                     </form>
-                    {
-                        outcomes && outcomes.map(outcome => {
-                            return (
-                                <div key={outcome.id} className='card my-3' >
-                                    <div className='card-body p-2 d-flex' >
-                                        <div>
-                                            <MdDragIndicator />
-                                        </div>
-                                        <div className='d-flex justify-content-between w-100' >
-                                            <div className='ps-2' >
-                                                {outcome.text}
-                                            </div>
-                                            <div className='d-flex'>
-                                                <a onClick={() => handleShow(outcome)} className='text-primary me-1' >
-                                                    <FaEdit />
-                                                </a>
-
-                                                <a onClick={() => deleteOutcome(outcome.id)} className='text-danger'>
-                                                    <MdDeleteForever />
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
+                    <DragDropContext onDragEnd={handleDragEnd}>
+                        <Droppable droppableId="list">
+                            {(provided) => (
+                                <div {...provided.droppableProps} ref={provided.innerRef} className="space-y-2">
+                                    {
+                                        outcomes.map((outcome, index) => (
+                                            <Draggable key={outcome.id} draggableId={`${outcome.id}`} index={index}>
+                                                {(provided) => (
+                                                    <div
+                                                        ref={provided.innerRef}
+                                                        {...provided.draggableProps}
+                                                        {...provided.dragHandleProps}
+                                                        className="mt-2 border bg-white shadow-lg rounded">
+                                                        <div className='card-body p-2 d-flex'>
+                                                            <div>
+                                                                <MdDragIndicator />
+                                                            </div>
+                                                            <div className='d-flex justify-content-between w-100'>
+                                                                <div className='ps-2'>
+                                                                    {outcome.text}
+                                                                </div>
+                                                                <div className='d-flex'>
+                                                                    <a onClick={() => handleShow(outcome)} className='text-primary me-1'>
+                                                                        <FaEdit />
+                                                                    </a>
+                                                                    <a onClick={() => deleteOutcome(outcome.id)} className='text-danger'>
+                                                                        <MdDeleteForever />
+                                                                    </a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </Draggable>
+                                        ))}
+                                    {provided.placeholder}
                                 </div>
-                            )
-                        })
-                    }
+                            )}
+                        </Droppable>
+                    </DragDropContext>
                 </div>
             </div>
 
@@ -172,7 +218,6 @@ const ManageOutcome = () => {
                 handleClose={handleClose}
                 outcomes={outcomes}
                 setOutcomes={setOutcomes}
-
             />
         </>
     )

@@ -26,10 +26,12 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/outcomes', [OutcomeController::class, 'store']);
     Route::put('/outcomes/{id}', [OutcomeController::class, 'update']);
     Route::delete('/outcomes/{id}', [OutcomeController::class, 'destroy']);
+    Route::post('/sort-outcomes', [OutcomeController::class, 'sortOutcomes']);
 
     // Requirment Routes.
     Route::get('/requirments', [RequirementController::class, 'index']);
     Route::post('/requirments', [RequirementController::class, 'store']);
     Route::put('/requirments/{id}', [RequirementController::class, 'update']);
     Route::delete('/requirments/{id}', [RequirementController::class, 'destroy']);
+    Route::post('/sort-requirments', [RequirementController::class, 'sortRequirments']);
 });

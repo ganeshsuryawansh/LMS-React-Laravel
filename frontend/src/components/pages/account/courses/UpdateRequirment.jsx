@@ -6,7 +6,6 @@ import { apiUrl, token } from '../../../common/Config';
 import toast from 'react-hot-toast';
 
 const UpdateRequirment = ({ showRequirment, requirments, setRequirments, requirmentData, handleClose }) => {
-
     const { register, handleSubmit, formState: { errors }, reset, setError } = useForm();
     const [loading, setLoading] = useState(false);
 
@@ -57,7 +56,7 @@ const UpdateRequirment = ({ showRequirment, requirments, setRequirments, requirm
                     </Modal.Header>
                     <Modal.Body>
                         <div className='mb-3'>
-                            <label>Title</label>
+                            <label>Requirment</label>
                             <input
                                 {
                                 ...register('requirment', {

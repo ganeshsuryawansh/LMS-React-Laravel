@@ -12,7 +12,9 @@ class OutcomeController extends Controller
     // this mwthid will return all OutComes of a course
     public function index(Request $request)
     {
-        $outcomes = Outcome::where('course_id', $request->course_id)->get();
+        $outcomes = Outcome::where('course_id', $request->course_id)
+            ->orderBy('sort_order', 'asc')
+            ->get();
 
         if ($outcomes == null) {
             return response()->json([
@@ -105,6 +107,20 @@ class OutcomeController extends Controller
         return response()->json([
             'status' => 200,
             'message' => 'Outcome Delete Successfully.!'
+        ], 200);
+    }
+
+    public function sortOutcomes(Request $request)
+    {
+        if (!empty($request->outcomes)) {
+            foreach ($request->outcomes as $key => $outcome) {
+                Outcome::where('id', $outcome['id'])->update(['sort_order' => $key]);
+            }
+        }
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Order Update Successfully.!'
         ], 200);
     }
 }
