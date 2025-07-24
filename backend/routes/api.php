@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\front\AccountController;
+use App\Http\Controllers\front\ChapterController;
 use App\Http\Controllers\front\CourseController;
 use App\Http\Controllers\front\OutcomeController;
 use App\Http\Controllers\front\RequirementController;
@@ -20,6 +21,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('courses/metaData', [CourseController::class, 'metaData']);
     Route::get('/courses/{id}', [CourseController::class, 'show']);
     Route::put('/courses/{id}', [CourseController::class, 'update']);
+    Route::post('/save-course-image/{id}', [CourseController::class, 'saveCourseImage']);
 
     // Outcomes Routes.
     Route::get('/outcomes', [OutcomeController::class, 'index']);
@@ -34,4 +36,11 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::put('/requirments/{id}', [RequirementController::class, 'update']);
     Route::delete('/requirments/{id}', [RequirementController::class, 'destroy']);
     Route::post('/sort-requirments', [RequirementController::class, 'sortRequirments']);
+
+    // Chapter Routes.
+    Route::get('/chapters', [ChapterController::class, 'index']);
+    Route::post('/chapters', [ChapterController::class, 'store']);
+    Route::put('/chapters/{id}', [ChapterController::class, 'update']);
+    Route::delete('/chapters/{id}', [ChapterController::class, 'destroy']);
+    Route::post('/sort-chapters', [ChapterController::class, 'sortOutcomes']);
 });
