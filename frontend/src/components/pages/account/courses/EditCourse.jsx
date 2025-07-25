@@ -7,11 +7,14 @@ import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import ManageOutcome from './ManageOutcome'
 import ManageRequirment from './ManageRequirment'
+import EditCover from './EditCover'
+import ManageChapter from './ManageChapter'
 
 const EditCourse = () => {
 
     const params = useParams();
     const [loading, setLoading] = useState(false);
+    const [course, setCourse] = useState([]);
 
     const { register, handleSubmit, formState: { errors }, reset, setError } = useForm({
         defaultValues: async () => {
@@ -34,6 +37,7 @@ const EditCourse = () => {
                             cross_price: result.data.cross_price,
                             description: result.data.description,
                         })
+                        setCourse(result.data);
                     } else {
                         console.log("Something Went Wrong");
                     }
@@ -94,7 +98,6 @@ const EditCourse = () => {
     }, [])
 
     return (
-
         <Layout>
             <section className='section-4'>
                 <div className='container pb-5 pt-3'>
@@ -238,12 +241,22 @@ const EditCourse = () => {
                                             </div>
                                         </div>
                                     </form>
+
+                                    <ManageChapter
+                                        course={course}
+                                        params={params}
+                                    />
                                 </div>
 
                                 {/* Outcomes */}
                                 <div className='col-md-5'>
                                     <ManageOutcome />
                                     <ManageRequirment />
+                                    <EditCover
+                                        course={course}
+                                        setCourse={setCourse}
+                                    />
+
                                 </div>
                             </div>
                         </div>

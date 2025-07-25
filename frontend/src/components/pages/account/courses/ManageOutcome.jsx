@@ -20,6 +20,7 @@ const ManageOutcome = () => {
     // Modal States
     const [showOutcome, setShowOutcome] = useState(false);
     const handleClose = () => setShowOutcome(false);
+    
     const handleShow = (outcome) => {
         setShowOutcome(true);
         setOutcomeData(outcome);
@@ -169,6 +170,7 @@ const ManageOutcome = () => {
                             {loading == false ? 'Save' : 'Please wait...'}
                         </button>
                     </form>
+                    
                     <DragDropContext onDragEnd={handleDragEnd}>
                         <Droppable droppableId="list">
                             {(provided) => (
