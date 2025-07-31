@@ -7,9 +7,9 @@ use App\Models\Lesson;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
+
 class LessonController extends Controller
 {
-
     // This method will save lesson.
     public function store(Request $request)
     {
@@ -75,6 +75,26 @@ class LessonController extends Controller
             'status' => 200,
             'data' => $lesson,
             'message' => 'Lesson Updated Successfully!'
+        ], 200);
+    }
+
+    // This method will delete lesson.
+    public function destroy($id)
+    {
+        $lesson = Lesson::find($id);
+
+        if ($lesson == null) {
+            return response()->json([
+                'status' => 401,
+                'message' => 'Lesson not found!'
+            ], 401);
+        }
+
+        $lesson->delete();
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Lesson Delete Successfully.!'
         ], 200);
     }
 }

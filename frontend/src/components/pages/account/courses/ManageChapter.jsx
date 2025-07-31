@@ -4,20 +4,30 @@ import { apiUrl, token } from '../../../common/Config';
 import toast from 'react-hot-toast';
 import Accordion from 'react-bootstrap/Accordion';
 import UpdateChapter from './UpdateChapter';
+import CreateLesson from './CreateLesson';
+import { Link } from 'react-router-dom';
+import { FaPlus } from 'react-icons/fa';
 
 const ManageChapter = ({ course, params }) => {
     const { register, handleSubmit, formState: { errors }, reset, setError } = useForm();
     const [loading, setLoading] = useState(false);
     const [chapterData, setChapterData] = useState();
 
-
+    // Update Chapter Model.
     const [showChapter, setShowChapter] = useState(false);
     const handleClose = () => setShowChapter(false);
-
-
     const handleShow = (chapter) => {
         setShowChapter(true);
         setChapterData(chapter);
+    }
+
+
+    // Create Lesson Model.
+    const [showLessonModel, setShowLessonModel] = useState(false);
+    const handleCloseLessonModel = () => setShowLessonModel(false);
+
+    const handleShowLessonModel = (chapter) => {
+        setShowLessonModel(true);
     }
 
 
@@ -105,12 +115,17 @@ const ManageChapter = ({ course, params }) => {
         }
     }, [course]);
 
+
     return (
         <>
             <div className='card shadow-lg border-0 mt-4'>
                 <div className='card-body p-4'>
                     <div className='d-flex'>
-                        <h4 className='h5 mb-3'>Chapters</h4>
+                        <div className='d-flex justify-content-between w-100'>
+                            <h4 className='h5 mb-3'>Chapters</h4>
+
+                            <Link onClick={() => handleShowLessonModel()} ><FaPlus size={12} /><strong>Add Lesson</strong></Link>
+                        </div>
                     </div>
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <div className='mb-3'>
@@ -159,8 +174,14 @@ const ManageChapter = ({ course, params }) => {
                 handleClose={handleClose}
                 setChapters={setChapters}
             />
+
+            <CreateLesson
+                showLessonModel={showLessonModel}
+                handleCloseLessonModel={handleCloseLessonModel}
+                course={course}
+            />
         </>
     )
 }
 
-export default ManageChapter
+export default ManageChapter;
