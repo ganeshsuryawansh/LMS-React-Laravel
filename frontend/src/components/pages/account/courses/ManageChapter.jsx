@@ -8,6 +8,7 @@ import CreateLesson from './CreateLesson';
 import { Link } from 'react-router-dom';
 import { FaPlus } from 'react-icons/fa';
 
+
 const ManageChapter = ({ course, params }) => {
     const { register, handleSubmit, formState: { errors }, reset, setError } = useForm();
     const [loading, setLoading] = useState(false);
@@ -21,7 +22,6 @@ const ManageChapter = ({ course, params }) => {
         setChapterData(chapter);
     }
 
-
     // Create Lesson Model.
     const [showLessonModel, setShowLessonModel] = useState(false);
     const handleCloseLessonModel = () => setShowLessonModel(false);
@@ -29,7 +29,6 @@ const ManageChapter = ({ course, params }) => {
     const handleShowLessonModel = (chapter) => {
         setShowLessonModel(true);
     }
-
 
     const chapterReducer = (state, action) => {
         switch (action.type) {
@@ -114,7 +113,6 @@ const ManageChapter = ({ course, params }) => {
             setChapters({ type: "SET_CHAPTERS", payload: course.chapters })
         }
     }, [course]);
-
 
     return (
         <>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { useForm } from 'react-hook-form';
@@ -12,8 +12,8 @@ const CreateLesson = ({ course, handleCloseLessonModel, showLessonModel }) => {
 
   const onSubmit = async (data) => {
     setLoading(true);
-    await fetch(`${apiUrl}/chapters/${chapterData.id}`, {
-      method: 'PUT',
+    await fetch(`${apiUrl}/lessons`, {
+      method: 'POST',
       headers: {
         'Content-type': 'application/json',
         'Accept': 'application/json',
@@ -24,8 +24,12 @@ const CreateLesson = ({ course, handleCloseLessonModel, showLessonModel }) => {
       .then(result => {
         setLoading(false);
         if (result.status == 200) {
-          setChapters({ type: "UPDATE_CHAPTER", payload: result.data })
           toast.success(result.message);
+          reset({
+            chapter: "",
+            lesson: ""
+          });
+          handleCloseLessonModel();
         } else {
           const errors = result.errors;
           Object.keys(errors).forEach(field => {
@@ -44,12 +48,14 @@ const CreateLesson = ({ course, handleCloseLessonModel, showLessonModel }) => {
           </Modal.Header>
           <Modal.Body>
             <div className='mb-3'>
+              <label htmlFor='' className='form-label'>Chapter</label>
               <select
                 {
                 ...register('chapter', {
-                  required: 'The chapter feild is required!'
+                  required: 'Please Select a Chapter!'
                 })
                 }
+                className={`form-select ${errors.chapter && 'is-invalid'} `}
               >
                 <option value="">Select a Chapter</option>
                 {
@@ -60,18 +66,37 @@ const CreateLesson = ({ course, handleCloseLessonModel, showLessonModel }) => {
                   })
                 }
               </select>
+              {errors.chapter && <p className='invalid-feedback'>{errors.chapter.message}</p>}
+            </div>
 
+            <div className='mb-3 my-2'>
+              <label htmlFor='' className='form-label'>Lesson</label>
               <input
                 {
-                ...register('chapter', {
-                  required: 'The chapter feild is required!'
+                ...register('lesson', {
+                  required: 'The lesson feild is required!'
                 })
                 }
                 type='text'
-                className={`form-control ${errors.chapter && 'is-invalid'} `}
-                placeholder='Chapter'
+                className={`form-control ${errors.lesson && 'is-invalid'} `}
+                placeholder='Lesson'
               />
-              {errors.chapter && <p className='invalid-feedback'>{errors.chapter.message}</p>}
+              {errors.lesson && <p className='invalid-feedback'>{errors.lesson.message}</p>}
+            </div>
+
+            <div className='mb-3 my-2'>
+              <label htmlFor='' className='form-label' >Status</label>
+              <select
+                {
+                ...register('status', {
+                  required: "The status field is required"
+                })
+                }
+                className='form-select'
+              >
+                <option value="1" selected>Active</option>
+                <option value="0">Block</option>
+              </select>
             </div>
           </Modal.Body>
           <Modal.Footer>

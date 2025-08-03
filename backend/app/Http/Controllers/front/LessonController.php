@@ -7,14 +7,13 @@ use App\Models\Lesson;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-
 class LessonController extends Controller
 {
     // This method will save lesson.
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'chapter_id' => 'required',
+            'chapter' => 'required',
             'lesson' => 'required'
         ]);
 
@@ -26,7 +25,7 @@ class LessonController extends Controller
         }
 
         $lesson = new Lesson();
-        $lesson->chapter_id = $request->chapter_id;
+        $lesson->chapter_id = $request->chapter;
         $lesson->title = $request->lesson;
         $lesson->sort_order = 1000;
         $lesson->status = $request->status;
