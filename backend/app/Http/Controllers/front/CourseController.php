@@ -15,7 +15,7 @@ use Intervention\Image\Drivers\GD\Driver;
 
 class CourseController extends Controller
 {
-    // This method will return all courses for specific user
+    // This method will return all courses for specific user.
     public function index() {}
 
     // This method save course data as draft
@@ -63,7 +63,7 @@ class CourseController extends Controller
 
     public function show($id)
     {
-        $course = course::with('chapters')->find($id);
+        $course = course::with(['chapters', 'chapters.lessons'])->find($id);
 
         if ($course == null) {
             return response()->json([
