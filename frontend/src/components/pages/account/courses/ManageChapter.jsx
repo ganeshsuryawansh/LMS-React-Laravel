@@ -167,7 +167,7 @@ const ManageChapter = ({ course, params }) => {
                                                     {
                                                         chapter.lessons && chapter.lessons.map(lesson => {
                                                             return (
-                                                                <div className='card shadow px-3 py-2 mb-2' >
+                                                                <div className='card shadow px-3 py-2 mb-2'>
                                                                     <div className='row'>
                                                                         <div className='col-md-7'>
                                                                             {lesson.title}
@@ -179,7 +179,7 @@ const ManageChapter = ({ course, params }) => {
                                                                             {
                                                                                 lesson.is_free_preview == 'yes' && <span className='badge bg-success'>Preview</span>
                                                                             }
-                                                                            <Link className='ms-2'>
+                                                                            <Link to={`/account/courses/edit-lesson/${lesson.id}/${course.id}`} className='ms-2'>
                                                                                 <BsPencilSquare />
                                                                             </Link>
                                                                             <Link className='ms-2'>
