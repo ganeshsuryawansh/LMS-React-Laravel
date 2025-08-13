@@ -13,7 +13,7 @@ class LessonController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'chapter' => 'required',
+            'chapter_id' => 'required',
             'lesson' => 'required'
         ]);
 
@@ -25,7 +25,7 @@ class LessonController extends Controller
         }
 
         $lesson = new Lesson();
-        $lesson->chapter_id = $request->chapter;
+        $lesson->chapter_id = $request->chapter_id;
         $lesson->title = $request->lesson;
         $lesson->sort_order = 1000;
         $lesson->status = $request->status;
