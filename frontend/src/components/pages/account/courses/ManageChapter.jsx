@@ -27,7 +27,7 @@ const ManageChapter = ({ course, params }) => {
     const [showLessonModel, setShowLessonModel] = useState(false);
     const handleCloseLessonModel = () => setShowLessonModel(false);
 
-    const handleShowLessonModel = (chapter) => {
+    const handleShowLessonModel = () => {
         setShowLessonModel(true);
     }
 
@@ -151,7 +151,7 @@ const ManageChapter = ({ course, params }) => {
                         {
                             chapters.map((chapter, index) => {
                                 return (
-                                    <Accordion.Item eventKey={index}>
+                                    <Accordion.Item key={index} eventKey={index}>
                                         <Accordion.Header>{chapter.title}</Accordion.Header>
                                         <Accordion.Body>
                                             <div className='row'>
@@ -165,9 +165,9 @@ const ManageChapter = ({ course, params }) => {
                                                 </div>
                                                 <div className='col-md-12'>
                                                     {
-                                                        chapter.lessons && chapter.lessons.map(lesson => {
+                                                        chapter.lessons && chapter.lessons.map((lesson, index) => {
                                                             return (
-                                                                <div className='card shadow px-3 py-2 mb-2'>
+                                                                <div key={index} className='card shadow px-3 py-2 mb-2'>
                                                                     <div className='row'>
                                                                         <div className='col-md-7'>
                                                                             {lesson.title}

@@ -6,5 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Lesson extends Model
 {
-    //
+    protected $appends = ['video_url'];
+
+    function getVideoUrlAttribute()
+    {
+        if ($this->video == "") {
+            return null;
+        }
+        return asset('uploads/course/videos/' . $this->video);
+    }
 }
