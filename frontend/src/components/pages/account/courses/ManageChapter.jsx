@@ -8,12 +8,13 @@ import CreateLesson from './CreateLesson';
 import { Link } from 'react-router-dom';
 import { FaPlus, FaTrashAlt } from 'react-icons/fa';
 import { BsPencilSquare } from 'react-icons/bs';
-
+import LessonsSort from './LessonsSort';
 
 const ManageChapter = ({ course, params }) => {
     const { register, handleSubmit, formState: { errors }, reset, setError } = useForm();
     const [loading, setLoading] = useState(false);
     const [chapterData, setChapterData] = useState();
+    const [lessonsData, setLessonsData] = useState([]);
 
     // Update Chapter Model.
     const [showChapter, setShowChapter] = useState(false);
@@ -26,9 +27,16 @@ const ManageChapter = ({ course, params }) => {
     // Create Lesson Model.
     const [showLessonModel, setShowLessonModel] = useState(false);
     const handleCloseLessonModel = () => setShowLessonModel(false);
-
     const handleShowLessonModel = () => {
         setShowLessonModel(true);
+    }
+
+    // Sort Lesson Model.
+    const [showLessonSortModel, setShowLessonSortModel] = useState(false);
+    const handleCloseLessonSortModel = () => setShowLessonSortModel(false);
+    const handleShowLessonSortModel = (lessons) => {
+        setShowLessonSortModel(true);
+        setLessonsData(lessons);
     }
 
     const chapterReducer = (state, action) => {
@@ -84,7 +92,6 @@ const ManageChapter = ({ course, params }) => {
     }
 
     const deleteChapter = async (id) => {
-
         if (confirm("Are you sure you want to delete!")) {
             await fetch(`${apiUrl}/chapters/${id}`, {
                 method: 'DELETE',
@@ -97,6 +104,31 @@ const ManageChapter = ({ course, params }) => {
                 .then(result => {
                     if (result.status == 200) {
                         setChapters({ type: "DELETE_CHAPTER", payload: id })
+                        toast.success(result.message);
+                        reset();
+                    } else {
+                        const errors = result.errors;
+                        Object.keys(errors).forEach(field => {
+                            setError(field, { message: errors[field[0]] })
+                        })
+                    }
+                });
+        }
+    }
+
+    const deleteLesson = async (id) => {
+        if (confirm("Are you sure you want to delete!")) {
+            await fetch(`${apiUrl}/lessons/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            }).then(res => res.json())
+                .then(result => {
+                    if (result.status == 200) {
+                        // setChapters({ type: "DELETE_CHAPTER", payload: id })
                         toast.success(result.message);
                         reset();
                     } else {
@@ -141,7 +173,6 @@ const ManageChapter = ({ course, params }) => {
                             />
                             {errors.chapter && <p className='invalid-feedback'>{errors.chapter.message}</p>}
                         </div>
-
                         <button className='btn btn-primary mb-4' disabled={loading} >
                             {loading == false ? 'Save' : 'Please wait...'}
                         </button>
@@ -158,9 +189,10 @@ const ManageChapter = ({ course, params }) => {
                                                 <div className='col-md-12'>
                                                     <div className='d-flex justify-content-between mb-2 mt-4'>
                                                         <h4 className='h5'>Lessons</h4>
-                                                        <a className='h6' href='/account/edit-course/15' data-discover='true'>
+
+                                                        <Link onClick={() => handleShowLessonSortModel(chapter.lessons)} className='h6' data-discover='true'>
                                                             <strong>Reorder Lessons</strong>
-                                                        </a>
+                                                        </Link>
                                                     </div>
                                                 </div>
                                                 <div className='col-md-12'>
@@ -182,7 +214,7 @@ const ManageChapter = ({ course, params }) => {
                                                                             <Link to={`/account/courses/edit-lesson/${lesson.id}/${course.id}`} className='ms-2'>
                                                                                 <BsPencilSquare />
                                                                             </Link>
-                                                                            <Link className='ms-2'>
+                                                                            <Link onClick={() => deleteLesson(lesson.id)} className='ms-2'>
                                                                                 <FaTrashAlt />
                                                                             </Link>
                                                                         </div>
@@ -219,6 +251,12 @@ const ManageChapter = ({ course, params }) => {
                 showLessonModel={showLessonModel}
                 handleCloseLessonModel={handleCloseLessonModel}
                 course={course}
+            />
+
+            <LessonsSort
+                showLessonSortModel={showLessonSortModel}
+                handleCloseLessonSortModel={handleCloseLessonSortModel}
+                lessonsData={lessonsData}
             />
         </>
     )
