@@ -4,35 +4,35 @@ import { useEffect, useState } from 'react';
 import { apiUrl, token } from '../../../common/Config';
 import toast from 'react-hot-toast';
 
+const SortChapters = ({ showChapterSortModel, handleCloseChapterSortModel, course, setChapters }) => {
 
-const LessonsSort = ({ showLessonSortModel, handleCloseLessonSortModel, lessonsData, setChapters }) => {
-
-    const [lessons, setLessons] = useState([]);
+    const [chapterData, setChapterData] = useState([]);
 
     const handleDragEnd = (result) => {
         if (!result.destination) return;
 
-        const reorderedItems = Array.from(lessons);
+        const reorderedItems = Array.from(chapterData);
         const [movedItem] = reorderedItems.splice(result.source.index, 1);
         reorderedItems.splice(result.destination.index, 0, movedItem);
 
-        setLessons(reorderedItems);
+        setChapterData(reorderedItems);
         saveOrder(reorderedItems);
     };
 
-    const saveOrder = async (updateLessons) => {
-        await fetch(`${apiUrl}/sort-lessons`, {
+    const saveOrder = async (UpdateChapter) => {
+        console.log(UpdateChapter)
+        await fetch(`${apiUrl}/sort-chapters`, {
             method: 'POST',
             headers: {
                 'Content-type': 'application/json',
                 'Accept': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({ lessons: updateLessons })
+            body: JSON.stringify({ lessons: UpdateChapter })
         }).then(res => res.json())
             .then(result => {
                 if (result.status == 200) {
-                    setChapters({ type: "UPDATE_CHAPTER", payload: result.chapter });
+                    // setChapters({ type: "UPDATE_CHAPTER", payload: result.chapter });
                     toast.success(result.message);
                 } else {
                     console.log('Something Went wrong!');
@@ -40,18 +40,18 @@ const LessonsSort = ({ showLessonSortModel, handleCloseLessonSortModel, lessonsD
             });
     }
 
-    useEffect(() => {
-        if (lessonsData) {
-            setLessons(lessonsData)
-        }
-    }, [lessonsData]);
 
+    useEffect(() => {
+        if (course && course.chapters) {
+            setChapterData(course.chapters);
+        }
+    }, [course]);
 
     return (
         <>
-            <Modal show={showLessonSortModel} onHide={handleCloseLessonSortModel}>
+            <Modal show={showChapterSortModel} onHide={handleCloseChapterSortModel}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Sort Lessons</Modal.Title>
+                    <Modal.Title>Sort Chapters</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <DragDropContext onDragEnd={handleDragEnd} >
@@ -59,7 +59,7 @@ const LessonsSort = ({ showLessonSortModel, handleCloseLessonSortModel, lessonsD
                             {(provided) => (
                                 <div {...provided.droppableProps} ref={provided.innerRef} className="space-y-2">
                                     {
-                                        lessonsData && lessonsData.map((item, index) => (
+                                        chapterData && chapterData.map((item, index) => (
                                             <Draggable key={item.id} draggableId={`${item.id}`} index={index}>
                                                 {(provided) => (
                                                     <div
@@ -83,8 +83,9 @@ const LessonsSort = ({ showLessonSortModel, handleCloseLessonSortModel, lessonsD
 
                 </Modal.Footer>
             </Modal>
+
         </>
     )
 }
 
-export default LessonsSort
+export default SortChapters

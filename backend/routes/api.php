@@ -42,7 +42,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/chapters', [ChapterController::class, 'store']);
     Route::put('/chapters/{id}', [ChapterController::class, 'update']);
     Route::delete('/chapters/{id}', [ChapterController::class, 'destroy']);
-    Route::post('/sort-chapters', [ChapterController::class, 'sortOutcomes']);
+    Route::post('/sort-chapters', [ChapterController::class, 'sortChapters']);
 
     // Lesson Routes.
     Route::post('/lessons', [LessonController::class, 'store']);

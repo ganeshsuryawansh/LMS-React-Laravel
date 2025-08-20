@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom';
 import { FaPlus, FaTrashAlt } from 'react-icons/fa';
 import { BsPencilSquare } from 'react-icons/bs';
 import LessonsSort from './LessonsSort';
+import SortChapters from './SortChapters';
 
 const ManageChapter = ({ course, params }) => {
     const { register, handleSubmit, formState: { errors }, reset, setError } = useForm();
@@ -37,6 +38,13 @@ const ManageChapter = ({ course, params }) => {
     const handleShowLessonSortModel = (lessons) => {
         setShowLessonSortModel(true);
         setLessonsData(lessons);
+    }
+
+    // Sort Chapter Model.
+    const [showChapterSortModel, setshowChapterSortModel] = useState(false);
+    const handleCloseChapterSortModel = () => setshowChapterSortModel(false);
+    const handleShowChapterSortModel = (lessons) => {
+        setshowChapterSortModel(true);
     }
 
     const chapterReducer = (state, action) => {
@@ -147,7 +155,6 @@ const ManageChapter = ({ course, params }) => {
         }
     }, [course]);
 
-
     return (
         <>
             <div className='card shadow-lg border-0 mt-4'>
@@ -157,6 +164,8 @@ const ManageChapter = ({ course, params }) => {
                             <h4 className='h5 mb-3'>Chapters</h4>
 
                             <Link onClick={() => handleShowLessonModel()} ><FaPlus size={12} /><strong>Add Lesson</strong></Link>
+
+                            <Link onClick={() => handleShowChapterSortModel()} ><strong>Reorder Chapters</strong></Link>
                         </div>
                     </div>
                     <form onSubmit={handleSubmit(onSubmit)}>
@@ -257,6 +266,14 @@ const ManageChapter = ({ course, params }) => {
                 showLessonSortModel={showLessonSortModel}
                 handleCloseLessonSortModel={handleCloseLessonSortModel}
                 lessonsData={lessonsData}
+                setChapters={setChapters}
+            />
+
+            <SortChapters
+                showChapterSortModel={showChapterSortModel}
+                handleCloseChapterSortModel={handleCloseChapterSortModel}
+                course={course}
+                setChapters={setChapters}
             />
         </>
     )

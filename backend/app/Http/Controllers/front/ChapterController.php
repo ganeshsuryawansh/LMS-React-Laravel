@@ -121,6 +121,7 @@ class ChapterController extends Controller
 
         return response()->json([
             'status' => 200,
+            'request' => $request->chapters,
             'message' => 'Order Update Successfully.!'
         ], 200);
     }
