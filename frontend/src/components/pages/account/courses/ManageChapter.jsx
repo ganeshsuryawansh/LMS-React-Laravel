@@ -10,6 +10,7 @@ import { FaPlus, FaTrashAlt } from 'react-icons/fa';
 import { BsPencilSquare } from 'react-icons/bs';
 import LessonsSort from './LessonsSort';
 import SortChapters from './SortChapters';
+import { AiOutlineDrag } from 'react-icons/ai';
 
 const ManageChapter = ({ course, params }) => {
     const { register, handleSubmit, formState: { errors }, reset, setError } = useForm();
@@ -162,10 +163,9 @@ const ManageChapter = ({ course, params }) => {
                     <div className='d-flex'>
                         <div className='d-flex justify-content-between w-100'>
                             <h4 className='h5 mb-3'>Chapters</h4>
-
+ 
                             <Link onClick={() => handleShowLessonModel()} ><FaPlus size={12} /><strong>Add Lesson</strong></Link>
-
-                            <Link onClick={() => handleShowChapterSortModel()} ><strong>Reorder Chapters</strong></Link>
+                            <Link onClick={() => handleShowChapterSortModel()} > <AiOutlineDrag size={12} /><strong>Reorder Chapters</strong></Link>
                         </div>
                     </div>
                     <form onSubmit={handleSubmit(onSubmit)}>

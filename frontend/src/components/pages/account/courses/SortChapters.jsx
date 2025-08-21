@@ -28,11 +28,11 @@ const SortChapters = ({ showChapterSortModel, handleCloseChapterSortModel, cours
                 'Accept': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({ lessons: UpdateChapter })
+            body: JSON.stringify({ chapters: UpdateChapter })
         }).then(res => res.json())
             .then(result => {
                 if (result.status == 200) {
-                    // setChapters({ type: "UPDATE_CHAPTER", payload: result.chapter });
+                    setChapters({ type: "SET_CHAPTERS", payload: result.chapters });
                     toast.success(result.message);
                 } else {
                     console.log('Something Went wrong!');

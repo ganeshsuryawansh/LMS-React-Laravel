@@ -176,4 +176,35 @@ class CourseController extends Controller
             'message' => 'Course Image has been Updated Successfully!'
         ], 200);
     }
+
+    public function changeStatus($id, Request $request)
+    {
+        $course = course::find($id);
+        if ($course == null) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'Course Not Found'
+            ], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'status' => 'required|in:0,1'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 400,
+                'errors' => $validator->errors()
+            ], 400);
+        }
+
+        $course->status = $request->status;
+        $course->save();
+        $message = $request->status == 1 ? 'Course has been Published Successfully!' : 'Course has been Unpublished Successfully!';
+
+        return response()->json([
+            'status' => 200,
+            'message' => $message
+        ], 200);
+    }
 }
