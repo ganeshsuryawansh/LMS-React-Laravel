@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\front;
 
 use App\Http\Controllers\Controller;
+use App\Models\course;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
@@ -71,5 +72,17 @@ class AccountController extends Controller
                 'errors' => 'Invalid Credentials'
             ], 401);
         }
+    }
+
+    public function courses(Request $request)
+    {
+        $courses = course::where('user_id', $request->user()->id)
+            ->with('level')
+            ->get();
+
+        return response()->json([
+            'status' => 200,
+            'courses' => $courses
+        ], 200);
     }
 }
