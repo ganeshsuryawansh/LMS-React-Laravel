@@ -1,7 +1,35 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom';
+import { apiUrl } from '../common/Config';
 import Course from './Course'
 
 const FeaturedCourses = () => {
+
+    const [courses, setCourses] = useState([]);
+
+    const fetchCourses = async () => {
+        fetch(`${apiUrl}/featured-courses`, {
+            method: 'GET',
+            headers: {
+                'Content-type': 'application/json',
+                'Accept': 'application/json',
+            }
+        }).then(res => res.json())
+            .then(result => {
+                if (result.status == 200) {
+                    setCourses(result.data);
+                    // console.log(result);
+                } else {
+                    console.log("Something Went Wrong!")
+                }
+            })
+            .catch(err => console.log(err));
+    }
+
+    useEffect(() => {
+        fetchCourses();
+    }, []);
+
     return (
         <section className='section-3 my-5'>
             <div className="container">
@@ -10,57 +38,18 @@ const FeaturedCourses = () => {
                     <p>Discover courses designed to help you excel in your professional and personal growth.</p>
                 </div>
                 <div className="row gy-4">
-                    <Course
-                        title='The complete 2025 Web Development Bootcamp'
-                        level='Advance'
-                        enrolled='10'
-                        customClasses="col-lg-3 col-md-6"
-                    />
-                    <Course
-                        title='The complete 2025 Web Development Bootcamp'
-                        level='Advance'
-                        enrolled='10'
-                        customClasses="col-lg-3 col-md-6"
-                    />
-                    <Course
-                        title='The complete 2025 Web Development Bootcamp'
-                        level='Advance'
-                        enrolled='10'
-                        customClasses="col-lg-3 col-md-6"
-                    />
-                    <Course
-                        title='The complete 2025 Web Development Bootcamp'
-                        level='Advance'
-                        enrolled='10'
-                        customClasses="col-lg-3 col-md-6"
-                    />
-                    <Course
-                        title='The complete 2025 Web Development Bootcamp'
-                        level='Advance'
-                        enrolled='10'
-                        customClasses="col-lg-3 col-md-6"
-                    />
-                    <Course
-                        title='The complete 2025 Web Development Bootcamp'
-                        level='Advance'
-                        enrolled='10'
-                        customClasses="col-lg-3 col-md-6"
-                    />
 
-                    <Course
-                        title='The complete 2025 Web Development Bootcamp'
-                        level='Advance'
-                        enrolled='10'
-                        customClasses="col-lg-3 col-md-6"
-                    />
-
-                    <Course
-                        title='The complete 2025 Web Development Bootcamp'
-                        level='Advance'
-                        enrolled='10'
-                        customClasses="col-lg-3 col-md-6"
-                    />   s
-
+                    {
+                        courses && courses.map((course) => {
+                            return (
+                                <Course
+                                    key={course.id}
+                                    course={course}
+                                    customClasses="col-lg-3 col-md-6"
+                                />
+                            )
+                        })
+                    }
                 </div>
             </div>
         </section>

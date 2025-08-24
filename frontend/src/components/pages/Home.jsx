@@ -9,7 +9,7 @@ const Home = () => {
         <Layout>
             <Hero />
             <FeaturedCategories />
-            <FeaturedCourses/>
+            <FeaturedCourses />
         </Layout>
     )
 }
