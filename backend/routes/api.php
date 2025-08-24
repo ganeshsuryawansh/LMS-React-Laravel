@@ -24,7 +24,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/save-course-image/{id}', [CourseController::class, 'saveCourseImage']);
     Route::put('/change-course-status/{id}', [CourseController::class, 'changeStatus']);
     Route::get('/my-courses', [AccountController::class, 'courses']);
-    Route::delete('/corses/{id}', [CourseController::class, 'destroy']);
+    Route::delete('/courses/{id}', [CourseController::class, 'destroy']);
 
     // Outcomes Routes.
     Route::get('/outcomes', [OutcomeController::class, 'index']);

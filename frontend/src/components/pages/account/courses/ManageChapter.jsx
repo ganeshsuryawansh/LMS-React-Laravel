@@ -163,7 +163,7 @@ const ManageChapter = ({ course, params }) => {
                     <div className='d-flex'>
                         <div className='d-flex justify-content-between w-100'>
                             <h4 className='h5 mb-3'>Chapters</h4>
- 
+
                             <Link onClick={() => handleShowLessonModel()} ><FaPlus size={12} /><strong>Add Lesson</strong></Link>
                             <Link onClick={() => handleShowChapterSortModel()} > <AiOutlineDrag size={12} /><strong>Reorder Chapters</strong></Link>
                         </div>
@@ -260,6 +260,8 @@ const ManageChapter = ({ course, params }) => {
                 showLessonModel={showLessonModel}
                 handleCloseLessonModel={handleCloseLessonModel}
                 course={course}
+                setChapters={setChapters}
+                chapters={chapters}
             />
 
             <LessonsSort
@@ -274,6 +276,7 @@ const ManageChapter = ({ course, params }) => {
                 handleCloseChapterSortModel={handleCloseChapterSortModel}
                 course={course}
                 setChapters={setChapters}
+                chapters={chapters}
             />
         </>
     )

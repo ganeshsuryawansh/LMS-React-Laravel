@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { apiUrl, token } from '../../../common/Config';
 import toast from 'react-hot-toast';
 
-const CreateLesson = ({ course, handleCloseLessonModel, showLessonModel }) => {
+const CreateLesson = ({ course, handleCloseLessonModel, showLessonModel, chapters }) => {
 
   const { register, handleSubmit, formState: { errors }, reset, setError } = useForm();
   const [loading, setLoading] = useState(false);
@@ -26,10 +26,12 @@ const CreateLesson = ({ course, handleCloseLessonModel, showLessonModel }) => {
         if (result.status == 200) {
           toast.success(result.message);
           reset({
-            chapter: "",
+            chapter_id: "",
             lesson: ""
           });
           handleCloseLessonModel();
+
+          
         } else {
           const errors = result.errors;
           Object.keys(errors).forEach(field => {
@@ -51,7 +53,7 @@ const CreateLesson = ({ course, handleCloseLessonModel, showLessonModel }) => {
               <label htmlFor='' className='form-label'>Chapter</label>
               <select
                 {
-                ...register('chapter', {
+                ...register('chapter_id', {
                   required: 'Please Select a Chapter!'
                 })
                 }
@@ -59,7 +61,7 @@ const CreateLesson = ({ course, handleCloseLessonModel, showLessonModel }) => {
               >
                 <option value="">Select a Chapter</option>
                 {
-                  course.chapters && course.chapters.map(chapter => {
+                  chapters && chapters.map(chapter => {
                     return (
                       <option value={chapter.id}>{chapter.title}</option>
                     )
