@@ -5,6 +5,8 @@ namespace App\Http\Controllers\front;
 use App\Http\Controllers\Controller;
 use App\Models\category;
 use App\Models\course;
+use App\Models\Language;
+use App\Models\Level;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -35,7 +37,7 @@ class HomeController extends Controller
 
     public function courses(Request $request)
     {
-        $courses = course::where('status', 1);
+        $courses = course::where('status', 1)->with('level');
 
         // Filter Course by keyword.
         if (!empty($request->keyword)) {
@@ -83,6 +85,26 @@ class HomeController extends Controller
         return response()->json([
             'status' => 200,
             'data' => $courses
+        ], 200);
+    }
+
+    public function fetchLevels()
+    {
+        $levels = Level::orderBy('created_at', 'ASC')->where('status', 1)->get();
+
+        return response()->json([
+            'status' => 200,
+            'data' => $levels
+        ], 200);
+    }
+
+    public function fetchLanguages()
+    {
+        $languages = Language::orderBy('name', 'ASC')->where('status', 1)->get();
+
+        return response()->json([
+            'status' => 200,
+            'data' => $languages
         ], 200);
     }
 }

@@ -2,12 +2,40 @@ import React, { useEffect, useState } from 'react'
 import Course from '../common/Course'
 import Layout from '../common/Layout'
 import { apiUrl } from '../common/Config';
+import { set } from 'react-hook-form';
 const Courses = () => {
 
   const [categories, setCategories] = useState([]);
+  const [levels, setLevels] = useState([]);
+  const [languages, setLanguages] = useState([]);
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [categoryChecked, setCategoryChecked] = useState([]);
 
-  const fetchCategories = async () => {
-    await fetch(`${apiUrl}/fetch-categories`, {
+  const handleCategory = (e) => {
+    const { checked, value } = e.target;
+
+    if (checked) {
+      setCategoryChecked(prev => [...prev, value])
+    } else {
+      setCategoryChecked(categoryChecked.filter((v) => v != value))
+    }
+  }
+
+  const fetchCourses = async () => {
+
+    let search = [];
+    let params = "";
+
+    if (categoryChecked.length > 0) {
+      search.push(['category', categoryChecked]);
+    }
+
+    if (search.length > 0) {
+      params = new URLSearchParams(search);
+    }
+
+    await fetch(`${apiUrl}/fetch-courses?${params}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -19,6 +47,27 @@ const Courses = () => {
         console.log(result);
 
         if (result.status == 200) {
+          setCourses(result.data);
+        } else {
+          console.log('Something went wrong');
+        }
+      })
+      .catch(err => console.log(err));
+  }
+
+  const fetchCategories = async () => {
+    await fetch(`${apiUrl}/fetch-categories`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      }
+    })
+      .then(res => res.json())
+      .then(result => {
+        // console.log(result);
+
+        if (result.status == 200) {
           setCategories(result.data);
         } else {
           console.log('Something went wrong');
@@ -27,9 +76,56 @@ const Courses = () => {
       .catch(err => console.log(err));
   }
 
+  const fetchLevels = async () => {
+    await fetch(`${apiUrl}/fetch-levels`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      }
+    })
+      .then(res => res.json())
+      .then(result => {
+        // console.log(result);
+
+        if (result.status == 200) {
+          setLevels(result.data);
+        } else {
+          console.log('Something went wrong');
+        }
+      })
+      .catch(err => console.log(err));
+  }
+
+  const fetchLanguages = async () => {
+    await fetch(`${apiUrl}/fetch-languages`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      }
+    })
+      .then(res => res.json())
+      .then(result => {
+        // console.log(result);
+
+        if (result.status == 200) {
+          setLanguages(result.data);
+        } else {
+          console.log('Something went wrong');
+        }
+      })
+      .catch(err => console.log(err));
+  }
+
+  useEffect(() => {
+    fetchCourses();
+  }, [categoryChecked]);
 
   useEffect(() => {
     fetchCategories();
+    fetchLevels();
+    fetchLanguages();
   }, []);
 
   return (
@@ -49,13 +145,13 @@ const Courses = () => {
                 <div className='pt-3'>
                   <h3 className='h5 mb-2'>Category</h3>
                   <ul>
-
                     {
                       categories && categories.map((category) => {
                         return (
                           <li key={category.id}>
                             <div className="form-check">
                               <input
+                                onClick={(e) => handleCategory(e)}
                                 className="form-check-input"
                                 type="checkbox"
                                 value={category.id}
@@ -69,81 +165,55 @@ const Courses = () => {
                         )
                       })
                     }
-
                   </ul>
                 </div>
                 <div className='mb-3'>
                   <h3 className='h5  mb-2'>Level</h3>
                   <ul>
-                    <li>
-                      <div className="form-check">
-                        <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault11" />
-                        <label className="form-check-label" htmlFor="flexCheckDefault11">
-                          Beginner
-                        </label>
-                      </div>
-                    </li>
-                    <li>
-                      <div className="form-check">
-                        <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault12" />
-                        <label className="form-check-label" htmlFor="flexCheckDefault12">
-                          Intermediate
-                        </label>
-                      </div>
-                    </li>
-                    <li>
-                      <div className="form-check">
-                        <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault13" />
-                        <label className="form-check-label" htmlFor="flexCheckDefault13">
-                          Advance
-                        </label>
-                      </div>
-                    </li>
+                    {
+                      levels && levels.map((level) => {
+                        return (
+                          <li key={level.id}>
+                            <div className="form-check">
+
+                              <input
+                                className="form-check-input"
+                                type="checkbox"
+                                value={level.id}
+                                id={`level-${level.id}`} />
+
+                              <label className="form-check-label" htmlFor={`level-${level.id}`}>
+                                {level.name}
+                              </label>
+                            </div>
+                          </li>
+                        )
+                      })
+                    }
                   </ul>
                 </div>
                 <div className='mb-3'>
                   <h3 className='h5 mb-2'>Language</h3>
                   <ul>
-                    <li>
-                      <div className="form-check">
-                        <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault31" />
-                        <label className="form-check-label" htmlFor="flexCheckDefault31">
-                          English
-                        </label>
-                      </div>
-                    </li>
-                    <li>
-                      <div className="form-check">
-                        <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault32" />
-                        <label className="form-check-label" htmlFor="flexCheckDefault32">
-                          Hindi
-                        </label>
-                      </div>
-                    </li>
-                    <li>
-                      <div className="form-check">
-                        <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault33" />
-                        <label className="form-check-label" htmlFor="flexCheckDefault33">
-                          Spanish
-                        </label>
-                      </div>
-                    </li>
-                    <li>
-                      <div className="form-check">
-                        <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault33" />
-                        <label className="form-check-label" htmlFor="flexCheckDefault33">
-                          German
-                        </label>
-                      </div>
-                    </li>
-                    <li>
-                      <div className="form-check">
-                        <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault34" />
-                        <label className="form-check-label" htmlFor="flexCheckDefault34">
-                          Italian
-                        </label>
-                      </div>
-                    </li>
+                    {
+                      languages && languages.map((language) => {
+                        return (
+                          <li key={language.id}>
+                            <div className="form-check">
+                              <input
+                                className="form-check-input"
+                                type="checkbox"
+                                value={language.id}
+                                id={`language-${language.id}`} />
+                              <label className="form-check-label" htmlFor={`language-${language.id}`}>
+                                {language.name}
+                              </label>
+                            </div>
+                          </li>
+                        )
+                      })
+                    }
+
                   </ul>
                 </div>
                 <a href="" className='clear-filter'>Clear All Filters</a>
@@ -165,19 +235,17 @@ const Courses = () => {
               </div>
               <div className="row gy-4">
 
-                {/* <Course
-                  title='The complete 2025 Web Development Bootcamp'
-                  level='Advance'
-                  enrolled='10'
-                  customClasses="col-lg-4 col-md-6"
-                />
-                
-                <Course
-                  title='The complete 2025 Web Development Bootcamp'
-                  level='Advance'
-                  enrolled='10'
-                  customClasses="col-lg-4 col-md-6"
-                /> */}
+                {
+                  courses && courses.map((c) => {
+                    return (
+                      <Course
+                        key={c.id}
+                        course={c}
+                        customClasses="col-lg-3 col-md-6"
+                      />
+                    )
+                  })
+                }
 
               </div>
             </section>
