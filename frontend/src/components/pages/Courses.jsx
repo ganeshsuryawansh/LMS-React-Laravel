@@ -2,15 +2,51 @@ import React, { useEffect, useState } from 'react'
 import Course from '../common/Course'
 import Layout from '../common/Layout'
 import { apiUrl } from '../common/Config';
-import { set } from 'react-hook-form';
-const Courses = () => {
+import { useSearchParams } from 'react-router-dom';
 
+const Courses = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [categories, setCategories] = useState([]);
+  const [keyword, setKeyword] = useState([]);
   const [levels, setLevels] = useState([]);
   const [languages, setLanguages] = useState([]);
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [categoryChecked, setCategoryChecked] = useState([]);
+
+  const [categoryChecked, setCategoryChecked] = useState(() => {
+    const category = searchParams.get('category');
+    return category ? category.split(',') : [];
+  });
+
+  const [levelChecked, setlevelChecked] = useState(() => {
+    const level = searchParams.get('level');
+    return level ? level.split(',') : [];
+  });
+
+  const [languageChecked, setLanguageChecked] = useState(() => {
+    const language = searchParams.get('language');
+    return language ? language.split(',') : [];
+  });
+
+  const handleLanguage = (e) => {
+    const { checked, value } = e.target;
+
+    if (checked) {
+      setLanguageChecked(prev => [...prev, value])
+    } else {
+      setLanguageChecked(languageChecked.filter((v) => v != value))
+    }
+  }
+
+  const handleLevel = (e) => {
+    const { checked, value } = e.target;
+
+    if (checked) {
+      setlevelChecked(prev => [...prev, value])
+    } else {
+      setlevelChecked(levelChecked.filter((v) => v != value))
+    }
+  }
 
   const handleCategory = (e) => {
     const { checked, value } = e.target;
@@ -31,8 +67,23 @@ const Courses = () => {
       search.push(['category', categoryChecked]);
     }
 
+    if (levelChecked.length > 0) {
+      search.push(['level', levelChecked]);
+    }
+
+    if (languageChecked.length > 0) {
+      search.push(['language', languageChecked]);
+    }
+
+    if (keyword.length > 0) {
+      search.push(['keyword', keyword]);
+    }
+
     if (search.length > 0) {
       params = new URLSearchParams(search);
+      setSearchParams(params);
+    } else {
+      setSearchParams([]);
     }
 
     await fetch(`${apiUrl}/fetch-courses?${params}`, {
@@ -44,7 +95,7 @@ const Courses = () => {
     })
       .then(res => res.json())
       .then(result => {
-        console.log(result);
+        // console.log(result);
 
         if (result.status == 200) {
           setCourses(result.data);
@@ -120,7 +171,7 @@ const Courses = () => {
 
   useEffect(() => {
     fetchCourses();
-  }, [categoryChecked]);
+  }, [categoryChecked, levelChecked, languageChecked, keyword]);
 
   useEffect(() => {
     fetchCategories();
@@ -141,7 +192,17 @@ const Courses = () => {
           <div className='col-lg-3'>
             <div className='sidebar mb-5 card border-0'>
               <div className='card-body shadow'>
-                <input type="text" className='form-control' placeholder='Search by keyword' />
+
+                <div className='mb-3 input-group'>
+                  <input
+                    value={keyword}
+                    onChange={(e) => setKeyword(e.target.value)}
+                    type="text"
+                    className='form-control'
+                    placeholder='Search by keyword' />
+                  <button className='btn btn-primary btn-sm'>Search</button>
+                </div>
+
                 <div className='pt-3'>
                   <h3 className='h5 mb-2'>Category</h3>
                   <ul>
@@ -151,6 +212,7 @@ const Courses = () => {
                           <li key={category.id}>
                             <div className="form-check">
                               <input
+                                defaultChecked={searchParams.get('category') ? searchParams.get('category').includes(category.id) : false}
                                 onClick={(e) => handleCategory(e)}
                                 className="form-check-input"
                                 type="checkbox"
@@ -177,6 +239,8 @@ const Courses = () => {
                             <div className="form-check">
 
                               <input
+                                defaultChecked={searchParams.get('level') ? searchParams.get('level').includes(level.id) : false}
+                                onClick={(e) => handleLevel(e)}
                                 className="form-check-input"
                                 type="checkbox"
                                 value={level.id}
@@ -201,6 +265,8 @@ const Courses = () => {
                           <li key={language.id}>
                             <div className="form-check">
                               <input
+                                defaultChecked={searchParams.get('language') ? searchParams.get('language').includes(language.id) : false}
+                                onClick={(e) => handleLanguage(e)}
                                 className="form-check-input"
                                 type="checkbox"
                                 value={language.id}
