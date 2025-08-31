@@ -2,12 +2,16 @@ import React, { useEffect, useState } from 'react'
 import Course from '../common/Course'
 import Layout from '../common/Layout'
 import { apiUrl } from '../common/Config';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
+import { set } from 'react-hook-form';
+import Loading from '../common/Loading';
+import Notfound from '../common/Notfound';
 
 const Courses = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [categories, setCategories] = useState([]);
   const [keyword, setKeyword] = useState([]);
+  const [sort, setSort] = useState('desc');
   const [levels, setLevels] = useState([]);
   const [languages, setLanguages] = useState([]);
   const [courses, setCourses] = useState([]);
@@ -59,7 +63,7 @@ const Courses = () => {
   }
 
   const fetchCourses = async () => {
-
+    setLoading(true);
     let search = [];
     let params = "";
 
@@ -79,6 +83,8 @@ const Courses = () => {
       search.push(['keyword', keyword]);
     }
 
+    search.push(['sort', sort]);
+
     if (search.length > 0) {
       params = new URLSearchParams(search);
       setSearchParams(params);
@@ -95,8 +101,7 @@ const Courses = () => {
     })
       .then(res => res.json())
       .then(result => {
-        // console.log(result);
-
+        setLoading(false);
         if (result.status == 200) {
           setCourses(result.data);
         } else {
@@ -169,9 +174,19 @@ const Courses = () => {
       .catch(err => console.log(err));
   }
 
+  const clearAllFilters = () => {
+    setlevelChecked([]);
+    setCategoryChecked([]);
+    setLanguageChecked([]);
+    setKeyword('');
+
+    document.querySelectorAll('.form-check-input').forEach((e) => e.checked = false)
+  }
+
+
   useEffect(() => {
     fetchCourses();
-  }, [categoryChecked, levelChecked, languageChecked, keyword]);
+  }, [categoryChecked, levelChecked, languageChecked, keyword, sort]);
 
   useEffect(() => {
     fetchCategories();
@@ -279,10 +294,9 @@ const Courses = () => {
                         )
                       })
                     }
-
                   </ul>
                 </div>
-                <a href="" className='clear-filter'>Clear All Filters</a>
+                <Link onClick={() => clearAllFilters()} className='clear-filter'>Clear All Filters</Link>
               </div>
             </div>
           </div>
@@ -293,16 +307,24 @@ const Courses = () => {
                   {/* 10 courses found */}
                 </div>
                 <div>
-                  <select name="" id="" className='form-select'>
-                    <option value="0">Newset First</option>
-                    <option value="1">Oldest First</option>
+                  <select
+                    value={sort}
+                    onChange={(e) => setSort(e.target.value)}
+                    className='form-select'>
+                    <option value="desc">Newset First</option>
+                    <option value="asc">Oldest First</option>
                   </select>
                 </div>
               </div>
               <div className="row gy-4">
-
                 {
-                  courses && courses.map((c) => {
+                  loading == false && courses.length == 0 && <Notfound />
+                }
+                {
+                  loading == true && <Loading />
+                }
+                {
+                  loading == false && courses && courses.map((c) => {
                     return (
                       <Course
                         key={c.id}
