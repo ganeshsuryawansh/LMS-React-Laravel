@@ -1,14 +1,40 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Header from '../common/Header';
 import Footer from '../common/Footer';
 import { Rating } from 'react-simple-star-rating'
 import ReactPlayer from 'react-player'
 import { Accordion, Badge, ListGroup, Card } from "react-bootstrap";
-
+import { useParams } from 'react-router-dom';
+import { apiUrl } from '../common/Config';
 
 const Detail = () => {
 
-  const [rating, setRating] = useState(4.0)
+  const [rating, setRating] = useState(4.0);
+  const params = useParams();
+  const [course, setCourse] = useState([]);
+
+  const fetchCourse = async () => {
+    fetch(`${apiUrl}/fetch-course/${params.id}`, {
+      method: 'GET',
+      headers: {
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+      }
+    }).then(res => res.json())
+      .then(result => {
+        if (result.status == 200) {
+          setCourse(result.data);
+          console.log(result);
+        } else {
+          console.log("Something Went Wrong!")
+        }
+      })
+      .catch(err => console.log(err));
+  }
+
+  useEffect(() => {
+    fetchCourse();
+  }, []);
 
   return (
     <>
@@ -23,10 +49,10 @@ const Detail = () => {
         </nav>
         <div className='row my-5'>
           <div className='col-lg-8'>
-            <h2>Web Development Bootcamp 2025</h2>
+            <h2>{course.title}</h2>
             <div className='d-flex'>
               <div className='mt-1'>
-                <span className="badge bg-green">Programming</span>
+                <span className="badge bg-green">{course.category.name}</span>
               </div>
               <div className='d-flex ps-3'>
                 <div className="text pe-2 pt-1">5.0</div>
