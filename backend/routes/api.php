@@ -31,7 +31,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::put('/courses/{id}', [CourseController::class, 'update']);
     Route::post('/save-course-image/{id}', [CourseController::class, 'saveCourseImage']);
     Route::put('/change-course-status/{id}', [CourseController::class, 'changeStatus']);
-    Route::get('/my-courses', [AccountController::class, 'courses']);
     Route::delete('/courses/{id}', [CourseController::class, 'destroy']);
 
     // Outcomes Routes.
@@ -62,4 +61,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::delete('/lessons/{id}', [LessonController::class, 'destroy']);
     Route::post('/save-lesson-video/{id}', [LessonController::class, 'saveVideo']);
     Route::post('/sort-lessons', [LessonController::class, 'sortLessons']);
+
+    Route::get('/my-courses', [AccountController::class, 'courses']);
+    Route::post('/enroll-course', [HomeController::class, 'enroll']);
 });
