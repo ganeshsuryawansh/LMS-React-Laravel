@@ -4,6 +4,7 @@ namespace App\Http\Controllers\front;
 
 use App\Http\Controllers\Controller;
 use App\Models\course;
+use App\Models\Enrollment;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
@@ -83,6 +84,18 @@ class AccountController extends Controller
         return response()->json([
             'status' => 200,
             'courses' => $courses
+        ], 200);
+    }
+
+    public function enrollments(Request $request)
+    {
+        $enrollments = Enrollment::where('user_id', $request->user()->id)
+            ->with('course', 'course.level')
+            ->get();
+
+        return response()->json([
+            'status' => 200,
+            'data' => $enrollments
         ], 200);
     }
 }

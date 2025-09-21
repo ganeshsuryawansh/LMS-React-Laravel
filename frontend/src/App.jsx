@@ -27,7 +27,7 @@ function App() {
           <Route path="/account/register" element={<Register />} />
           <Route path="/account/my-courses" element={<MyCourses />} />
           <Route path="/account/Change-Password" element={<ChangePassword />} />
-          <Route path="/account/courses-enrolled" element={<MyLearning />} />
+          <Route path="/account/my-learning" element={<MyLearning />} />
           <Route path="/account/WatchCourse" element={<WatchCourse />} />
 
           <Route path="/account/dashboard" element={

@@ -6,5 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Enrollment extends Model
 {
-    //
+    public function course()
+    {
+        return $this->belongsTo(course::class, 'course_id', 'id');
+    }
 }

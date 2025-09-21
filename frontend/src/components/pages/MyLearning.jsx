@@ -1,9 +1,41 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import UserSidebar from '../common/UserSidebar'
 import CourseEnrolled from '../common/CourseEnrolled'
 import Layout from '../common/Layout'
+import { apiUrl, token } from '../common/Config'
+import toast from 'react-hot-toast'
+import Loading from '../common/Loading'
 
 const MyLearning = () => {
+
+    const [enrollments, setEnrollments] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    const fetchEnrollments = async () => {
+        setLoading(true);
+        await fetch(`${apiUrl}/enrollments`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        }).then(response => response.json())
+            .then(result => {
+                if (result.status === 200) {
+                    setEnrollments(result.data);
+                    setLoading(false);
+                } else {
+                    console.error('Error deleting course:', result.message);
+                }
+            })
+
+    }
+
+    useEffect(() => {
+        fetchEnrollments();
+    }, []);
+
     return (
         <>
             <Layout>
@@ -18,14 +50,25 @@ const MyLearning = () => {
                                 <UserSidebar />
                             </div>
                             <div className='col-lg-9'>
-                                <div className='row gy-4'>
-                                    <CourseEnrolled />
-                                    <CourseEnrolled />
-                                    <CourseEnrolled />
-                                    <CourseEnrolled />
-                                    <CourseEnrolled />
-                                    <CourseEnrolled />
-                                </div>
+
+                                {
+                                    loading && loading == true && <Loading />
+                                }
+
+                                {
+                                    loading == false && <div className='row gy-4'>
+                                        {
+                                            enrollments && enrollments.map((enrollment, index) => {
+                                                return (
+                                                    <CourseEnrolled
+                                                        enrollment={enrollment}
+                                                        key={index}
+                                                    />
+                                                )
+                                            })
+                                        }
+                                    </div>
+                                }
                             </div>
                         </div>
                     </div>
