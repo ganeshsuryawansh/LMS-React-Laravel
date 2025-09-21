@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react'
 import { Rating } from 'react-simple-star-rating'
 import ReactPlayer from 'react-player'
 import { Accordion, Badge, ListGroup, Card } from "react-bootstrap";
-import { Link, useParams } from 'react-router-dom';
-import { apiUrl, convertMinutesToHours } from '../common/Config';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { apiUrl, convertMinutesToHours, token } from '../common/Config';
 import { LuMonitor, LuMonitorPlay } from 'react-icons/lu';
 import Layout from '../common/Layout';
 import Loading from '../common/Loading';
 import FreePreview from '../common/FreePreview';
+import toast from 'react-hot-toast';
 
 const Detail = () => {
 
@@ -16,6 +17,7 @@ const Detail = () => {
   const [course, setCourse] = useState({});
   const [loading, setLoading] = useState(true);
   const [freeLesson, setFreeLesson] = useState({});
+  const navigate = useNavigate();
 
   // Free Preview Modal State 
   const [show, setShow] = useState(false);
@@ -43,6 +45,41 @@ const Detail = () => {
       })
       .catch(err => console.log(err));
   }
+
+  const enrollCourse = async () => {
+    try {
+      const data = { course_id: course.id };
+
+      const res = await fetch(`${apiUrl}/enroll-course`, {
+        method: 'POST',
+        headers: {
+          'Content-type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(data)
+      });
+
+      const result = await res.json();
+
+      if (res.status === 200) {
+        toast.success(result.message);
+      } else if (res.status === 409) {
+        toast.error(result.message);
+      } else if (res.status === 401) {
+        toast.error('You are not logged in!');
+        navigate('/account/login');
+      } else {
+        toast.error(result.message || 'Something went wrong');
+      }
+
+    } catch (err) {
+      console.log(err);
+      toast.error('Network error!');
+    }
+  };
+
+
 
   useEffect(() => {
     fetchCourse();
@@ -244,8 +281,9 @@ const Detail = () => {
                     }
 
                     <div className="mt-4">
-                      <button className="btn btn-primary w-100">
-                        <i className="bi bi-ticket"></i> Buy Now
+                      <button onClick={() => enrollCourse()} className="btn btn-primary w-100">
+                        <i className="bi bi-ticket"></i>
+                        Enroll Now
                       </button>
                     </div>
                   </Card.Body>
