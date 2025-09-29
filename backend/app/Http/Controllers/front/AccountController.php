@@ -98,4 +98,40 @@ class AccountController extends Controller
             'data' => $enrollments
         ], 200);
     }
+
+    public function course($id, Request $request)
+    {
+        $count = Enrollment::where(['user_id' => $request->user()->id, 'course_id' => $id])->count();
+
+        if ($count == 0) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'You Can Not Access This Course!'
+            ], 404);
+        }
+
+        $course = course::where('id', $id)
+            ->withCount('chapters')
+            ->with([
+                'category',
+                'level',
+                'language',
+                'chapters' => function ($query) {
+                    $query->withCount(['lessons' => function ($q) {
+                        $q->where('status', 1)->whereNotNull('video');
+                    }]);
+                    $query->withSum('lessons as lessons_sum_duration', 'duration');
+                },
+                'chapters.lessons' => function ($q) {
+                    $q->where('status', 1);
+                    $q->whereNotNull('video');
+                }
+            ])
+            ->first();
+
+        return response()->json([
+            'status' => 200,
+            'data' => $course
+        ], 200);
+    }
 }

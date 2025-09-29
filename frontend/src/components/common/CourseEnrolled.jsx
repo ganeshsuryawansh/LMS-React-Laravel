@@ -5,14 +5,12 @@ const CourseEnrolled = ({ enrollment }) => {
         <div className="col-md-4">
             <div className='card border-0'>
                 <div className='card-img-top'>
-
                     {
                         enrollment.course.course_small_image && <img src={enrollment.course.course_small_image} alt="" className='img-fluid' />
                     }
                     {
                         enrollment.course.course_small_image === "" && <img src={`https://placehold.co/600x350?text=${enrollment.course.title}`} alt="" className='img-fluid' />
                     }
-
                 </div>
                 <div className='card-body'>
                     <div className="card-title">
@@ -54,7 +52,7 @@ const CourseEnrolled = ({ enrollment }) => {
                 <div className="card-footer bg-white">
                     <div className="d-flex py-2 justify-content-between align-items-center">
                         <div className="add-to-cart">
-                            <a href="/detail" className="btn btn-primary" >Watch Now</a>
+                            <a href={`/account/watch-course/${enrollment.course_id}`} className="btn btn-primary" >Watch Now</a>
                         </div>
                     </div>
                 </div>

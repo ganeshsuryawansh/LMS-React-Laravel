@@ -121,7 +121,6 @@ class HomeController extends Controller
                     $query->withCount(['lessons' => function ($q) {
                         $q->where('status', 1)->whereNotNull('video');
                     }]);
-
                     $query->withSum('lessons as lessons_sum_duration', 'duration');
                 },
                 'chapters.lessons' => function ($q) {

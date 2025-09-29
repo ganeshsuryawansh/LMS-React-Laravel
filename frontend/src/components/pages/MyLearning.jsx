@@ -50,11 +50,9 @@ const MyLearning = () => {
                                 <UserSidebar />
                             </div>
                             <div className='col-lg-9'>
-
                                 {
                                     loading && loading == true && <Loading />
                                 }
-
                                 {
                                     loading == false && <div className='row gy-4'>
                                         {
