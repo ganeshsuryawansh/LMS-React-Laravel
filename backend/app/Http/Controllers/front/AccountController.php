@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\front;
 
 use App\Http\Controllers\Controller;
+use App\Models\Activities;
+use App\Models\Chapter;
 use App\Models\course;
 use App\Models\Enrollment;
+use App\Models\Lesson;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
@@ -129,9 +132,32 @@ class AccountController extends Controller
             ])
             ->first();
 
+        $activityCount = Activities::where(['user_id' => $request->user()->id, 'course_id' => $id])->count();
+
+        $activeLesson = collect();
+
+        if ($activityCount == 0) {
+            $chapter = Chapter::where('course_id', $id)->orderBy('sort_order', 'asc')->first();
+            $lesson = Lesson::where('chapter_id', $chapter->id)->where('status', 1)->whereNotNull('video')->orderBy('sort_order', 'asc')->first();
+
+            $activity = new Activities();
+            $activity->user_id = $request->user()->id;
+            $activity->course_id = $id;
+            $activity->chapter_id = $chapter->id;
+            $activity->lesson_id = $lesson->id;
+            $activity->is_last_watched = "yes";
+            $activity->save();
+
+            $activeLesson = $lesson;
+        } else {
+            $activity = Activities::where(['user_id' => $request->user()->id, 'course_id' => $id])->first();
+            $activeLesson = Lesson::where('id', $activity->lesson_id)->first();
+        }
+
         return response()->json([
             'status' => 200,
-            'data' => $course
+            'data' => $course,
+            'activeLesson' => $activeLesson
         ], 200);
     }
 }
